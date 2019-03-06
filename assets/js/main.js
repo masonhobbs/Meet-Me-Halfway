@@ -1,8 +1,9 @@
 //JavaScript for fadeout of intial search buttons //
 $(document).ready(function(){
   $("#submit-btn").click(function(){
+    //I want Google default map controls to be hidden upon loading landing page
     $("#landing-page").fadeOut();
-    $("#map").fadeIn();
+    $("#map-content").fadeIn();
   });
 });
 
