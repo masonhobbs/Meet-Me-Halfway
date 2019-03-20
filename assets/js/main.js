@@ -3,7 +3,8 @@ $(document).ready(function(){
   $("#submit-btn").click(function(){
     //I want Google default map controls to be hidden upon loading landing page
     $("#landing-page").fadeOut();
-    $("#map-content").fadeIn();
+    document.getElementById('origin-input').value = document.getElementById('origin-landing').value
+    document.getElementById('destination-input').value = document.getElementById('destination-landing').value;
   });
 });
 
@@ -33,11 +34,11 @@ function AutocompleteDirectionsHandler(map) {
   this.directionsDisplay = new google.maps.DirectionsRenderer;
   this.directionsDisplay.setMap(map);
 
-  var originInput = document.getElementById('origin-input');
-  var destinationInput = document.getElementById('destination-input');
-  var modeSelector = document.getElementById('mode-selector');
-  var originField = document.getElementById('origin-field');
-  var destinationField = document.getElementById('destination-field');
+  var originInput = document.getElementById('origin-input'); //data field on home/map page
+  var destinationInput = document.getElementById('destination-input'); //data field on home/map page
+  var modeSelector = document.getElementById('mode-selector'); //buttons to choose between driving, walking, or transit
+  var originLanding = document.getElementById('origin-landing'); //data field on landing page
+  var destinationLanding = document.getElementById('destination-landing'); //data field on landing page
 
   var originAutocomplete = new google.maps.places.Autocomplete(originInput);
   // Specify just the place data fields that you need.
@@ -48,24 +49,27 @@ function AutocompleteDirectionsHandler(map) {
   // Specify just the place data fields that you need.
   destinationAutocomplete.setFields(['place_id']);
 
-  var originFieldAutocomplete =
-      new google.maps.places.Autocomplete(originField);
+  var originLandingAutocomplete =
+      new google.maps.places.Autocomplete(originLanding);
   // Specify just the place data fields that you need.
-  destinationAutocomplete.setFields(['place_id']);
+  originLandingAutocomplete.setFields(['place_id']);
 
-  var destinationFieldAutocomplete =
-      new google.maps.places.Autocomplete(destinationField);
+  var destinationLandingAutocomplete =
+      new google.maps.places.Autocomplete(destinationLanding);
   // Specify just the place data fields that you need.
-  destinationAutocomplete.setFields(['place_id']);
+  destinationLandingAutocomplete.setFields(['place_id']);
 
   this.setupClickListener('changemode-driving', 'DRIVING');
   this.setupClickListener('changemode-transit', 'TRANSIT');
   this.setupClickListener('changemode-walking', 'WALKING');
 
+  this.setupPlaceChangedListener(originLandingAutocomplete, 'ORIG');
+  this.setupPlaceChangedListener(destinationLandingAutocomplete, 'DEST')
+
   this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
   this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
 
-
+//positioning of these features
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(
       destinationInput);
