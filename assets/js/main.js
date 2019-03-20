@@ -8,20 +8,47 @@ $(document).ready(function(){
     document.getElementById('origin-input').value = document.getElementById('origin-landing').value
     document.getElementById('destination-input').value = document.getElementById('destination-landing').value;
   });
+
+  var map;
+  var polyline = null;
+  var info_window;
 });
 
-// This example requires the Places library. Include the libraries=places
-// parameter when you first load the API. For example:
-// <script
-// src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 function initMap() {
-  var map = new google.maps.Map(document.getElementById('map'), {
+  map = new google.maps.Map(document.getElementById('map'), {
     mapTypeControl: false,
     center: {lat: 33.254521, lng: -97.152979},
     zoom: 13
   });
+  polyline = new google.maps.Polyline({
+    path: [],
+    strokeColor: '#FF0000',
+    strokeWeight: 0
+  });
+  info_window = new google.maps.InfoWindow();
 
   new AutocompleteDirectionsHandler(map);
+}
+
+// Marker for halfway point
+function create_marker(lat_lng, label, a_distance, b_distance) {
+  var content = '<b>' + label + '</b>';
+  var marker = new google.maps.Marker({
+    position: lat_lng,
+    map: map,
+    title: label,
+    zIndex: Math.round(lat_lng.lat()*-100000)<<5
+  });
+  marker.myname = label;
+  google.maps.event.addListener(marker, 'click', function() {
+        info_window.setContent(content
+                                + '<br>' +marker.getPosition().toUrlValue(6)
+                                + '<br>Distance from point A: ' + a_distance
+                                + '<br>Distance from point B: ' + b_distance);
+        info_window.open(map,marker);
+  });
+
+  return marker;
 }
 
 /**
@@ -118,16 +145,74 @@ AutocompleteDirectionsHandler.prototype.route = function() {
   }
   var me = this;
 
+  // Requests a route from origin to destination based off autocompleted addresses
   this.directionsService.route(
       {
         origin: {'placeId': this.originPlaceId},
         destination: {'placeId': this.destinationPlaceId},
         travelMode: this.travelMode
       },
+      // Handle response back
       function(response, status) {
         if (status === 'OK') {
           me.directionsDisplay.setDirections(response);
-        } else {
+
+          // For the route given, create a hidden line of it out of the response
+          polyline.setPath([]);
+          var bounds = new google.maps.LatLngBounds();
+          start_location = new Object();
+          end_location = new Object();
+          var route = response.routes[0];
+
+          var path = response.routes[0].overview_path;
+          var legs = response.routes[0].legs;
+          for (var i = 0; i < legs.length; i++) {
+            if (i == 0) {
+              start_location.latlng = legs[i].start_location;
+              start_location.address = legs[i].start_address;
+              marker = create_marker(legs[i].start_location,"Halfway point, distance wise",
+                                      "x miles away from A", "x miles away from B");
+            }
+            end_location.latlng = legs[i].end_location;
+            end_location.address = legs[i].end_address;
+            var steps = legs[i].steps;
+            for (var j = 0; j < steps.length; j++) {
+              var nextSegment = steps[j].path;
+              for (k=0;k<nextSegment.length;k++) {
+                polyline.getPath().push(nextSegment[k]);
+                bounds.extend(nextSegment[k]);
+              }
+            }
+          }
+          computeTotalDistance(response);
+
+          var totalDist = 0;
+          var totalTime = 0;
+          function computeTotalDistance(result) {
+            totalDist = 0;
+            totalTime = 0;
+            var myroute = result.routes[0];
+            for (i = 0; i < myroute.legs.length; i++) {
+              totalDist += myroute.legs[i].distance.value;
+              totalTime += myroute.legs[i].duration.value;
+            }
+            putMarkerOnRoute(50);
+
+            totalDist = totalDist / 1000;
+          }
+
+          function putMarkerOnRoute(percentage) {
+            var distance = (percentage/100) * totalDist;
+            var time = ((percentage/100) * totalTime/60).toFixed(2);
+            if (!marker) {
+              marker = create_marker(polyline.GetPointAtDistance(distance),"time: "+time,"marker");
+            } else {
+              marker.setPosition(polyline.GetPointAtDistance(distance));
+              marker.setTitle("time:"+time);
+            }
+          }
+        }
+        else {
           window.alert('Directions request failed due to ' + status);
         }
       });
