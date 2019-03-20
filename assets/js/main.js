@@ -1,8 +1,16 @@
+//JavaScript for fadeout of intial search buttons //
+$(document).ready(function(){
+  $("#submit-btn").click(function(){
+    //I want Google default map controls to be hidden upon loading landing page
+    $("#landing-page").fadeOut();
+    $("#map-content").fadeIn();
+  });
+});
+
 // This example requires the Places library. Include the libraries=places
 // parameter when you first load the API. For example:
 // <script
 // src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
-
 function initMap() {
   var map = new google.maps.Map(document.getElementById('map'), {
     mapTypeControl: false,
@@ -28,6 +36,8 @@ function AutocompleteDirectionsHandler(map) {
   var originInput = document.getElementById('origin-input');
   var destinationInput = document.getElementById('destination-input');
   var modeSelector = document.getElementById('mode-selector');
+  var originField = document.getElementById('origin-field');
+  var destinationField = document.getElementById('destination-field');
 
   var originAutocomplete = new google.maps.places.Autocomplete(originInput);
   // Specify just the place data fields that you need.
@@ -38,12 +48,23 @@ function AutocompleteDirectionsHandler(map) {
   // Specify just the place data fields that you need.
   destinationAutocomplete.setFields(['place_id']);
 
+  var originFieldAutocomplete =
+      new google.maps.places.Autocomplete(originField);
+  // Specify just the place data fields that you need.
+  destinationAutocomplete.setFields(['place_id']);
+
+  var destinationFieldAutocomplete =
+      new google.maps.places.Autocomplete(destinationField);
+  // Specify just the place data fields that you need.
+  destinationAutocomplete.setFields(['place_id']);
+
   this.setupClickListener('changemode-driving', 'DRIVING');
   this.setupClickListener('changemode-transit', 'TRANSIT');
   this.setupClickListener('changemode-walking', 'WALKING');
 
   this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
   this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
+
 
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(
