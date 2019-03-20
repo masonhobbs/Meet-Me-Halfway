@@ -4,7 +4,7 @@ $(document).ready(function(){
     //I want Google default map controls to be hidden upon loading landing page
     $("#landing-page").fadeOut();
     document.getElementById('origin-input').value = document.getElementById('origin-landing').value
-    document.getElementById('landing-input').value = document.getElementById('landing-landing').value;
+    document.getElementById('destination-input').value = document.getElementById('destination-landing').value;
   });
 });
 
