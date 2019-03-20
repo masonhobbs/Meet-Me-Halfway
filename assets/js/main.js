@@ -3,7 +3,8 @@ $(document).ready(function(){
   $("#submit-btn").click(function(){
     //I want Google default map controls to be hidden upon loading landing page
     $("#landing-page").fadeOut();
-    document.getElementById('origin-input').value = document.getElementById('origin-landing').value;
+    document.getElementById('origin-input').value = document.getElementById('origin-landing').value
+    document.getElementById('landing-input').value = document.getElementById('landing-landing').value;
   });
 });
 
@@ -51,16 +52,19 @@ function AutocompleteDirectionsHandler(map) {
   var originLandingAutocomplete =
       new google.maps.places.Autocomplete(originLanding);
   // Specify just the place data fields that you need.
-  destinationAutocomplete.setFields(['place_id']);
+  originLandingAutocomplete.setFields(['place_id']);
 
   var destinationLandingAutocomplete =
       new google.maps.places.Autocomplete(destinationLanding);
   // Specify just the place data fields that you need.
-  destinationAutocomplete.setFields(['place_id']);
+  destinationLandingAutocomplete.setFields(['place_id']);
 
   this.setupClickListener('changemode-driving', 'DRIVING');
   this.setupClickListener('changemode-transit', 'TRANSIT');
   this.setupClickListener('changemode-walking', 'WALKING');
+
+  this.setupPlaceChangedListener(originLandingAutocomplete, 'ORIG');
+  this.setupPlaceChangedListener(destinationLandingAutocomplete, 'DEST')
 
   this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
   this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
