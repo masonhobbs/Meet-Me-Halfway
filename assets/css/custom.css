@@ -68,10 +68,13 @@ html, body {
 
 #form {
   margin: auto;
+  height: 100%;
 }
 #landing-page input, #landing-page button{
   display: inline-block;
-  width: 80%;
+  position: relative;
+  width: 50%;
+  height: 10%;
   margin: 1%;
 }
 
