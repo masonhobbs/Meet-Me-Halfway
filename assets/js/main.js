@@ -2,7 +2,9 @@
 $(document).ready(function(){
   $("#submit-btn").click(function(){
     //I want Google default map controls to be hidden upon loading landing page
-    $("#landing-page").fadeOut();
+    $("#origin-landing").animate({left: '150%'}, 800);
+    $("#destination-landing").animate({right: '150%'}, 800);
+    $("#landing-page").fadeOut(1200);
     document.getElementById('origin-input').value = document.getElementById('origin-landing').value
     document.getElementById('destination-input').value = document.getElementById('destination-landing').value;
   });
@@ -64,7 +66,7 @@ function AutocompleteDirectionsHandler(map) {
   this.setupClickListener('changemode-walking', 'WALKING');
 
   this.setupPlaceChangedListener(originLandingAutocomplete, 'ORIG');
-  this.setupPlaceChangedListener(destinationLandingAutocomplete, 'DEST')
+  this.setupPlaceChangedListener(destinationLandingAutocomplete, 'DEST');
 
   this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
   this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
