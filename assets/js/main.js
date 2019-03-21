@@ -12,6 +12,7 @@ $(document).ready(function(){
   var map;
   var polyline = null;
   var info_window;
+  var geocoder;
 });
 
 function initMap() {
@@ -26,6 +27,7 @@ function initMap() {
     strokeWeight: 0
   });
   info_window = new google.maps.InfoWindow();
+  geocoder = new google.maps.Geocoder();
 
   new AutocompleteDirectionsHandler(map);
 }
@@ -37,15 +39,34 @@ function create_marker(lat_lng, label, a_distance, b_distance) {
     position: lat_lng,
     map: map,
     title: label,
-    zIndex: Math.round(lat_lng.lat()*-100000)<<5
+    zIndex: Math.round(lat_lng.lat()*-100000)<<5,
+    icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 10.0,
+        fillColor: "#28ba39",
+        fillOpacity: 1.0,
+        strokeWeight: 1.0
+    }
   });
   marker.myname = label;
+  var converted_address;
+
+  // Display halfway point info when marker is clicked
   google.maps.event.addListener(marker, 'click', function() {
-        info_window.setContent(content
-                                + '<br>' +marker.getPosition().toUrlValue(6)
-                                + '<br>Distance from point A: ' + a_distance
-                                + '<br>Distance from point B: ' + b_distance);
-        info_window.open(map,marker);
+      // Convert GPS coords to address
+      geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
+          if(status == 'OK') {
+              converted_address = results[0].formatted_address;
+              info_window.setContent(content
+                  + '<br>' + converted_address
+                  + '<br>Distance from point A: ' + a_distance
+                  + '<br>Distance from point B: ' + b_distance);
+                  info_window.open(map,marker);
+          }
+          else {
+              alert("Error displaying marker information");
+          }
+     });
   });
 
   return marker;
@@ -170,8 +191,6 @@ AutocompleteDirectionsHandler.prototype.route = function() {
             if (i == 0) {
               start_location.latlng = legs[i].start_location;
               start_location.address = legs[i].start_address;
-              marker = create_marker(legs[i].start_location,"Halfway point, distance wise",
-                                      "x miles away from A", "x miles away from B");
             }
             end_location.latlng = legs[i].end_location;
             end_location.address = legs[i].end_address;
@@ -184,6 +203,7 @@ AutocompleteDirectionsHandler.prototype.route = function() {
               }
             }
           }
+          // Determine total distance of entire route; used to find the halfway point
           computeTotalDistance(response);
 
           var totalDist = 0;
@@ -196,11 +216,17 @@ AutocompleteDirectionsHandler.prototype.route = function() {
               totalDist += myroute.legs[i].distance.value;
               totalTime += myroute.legs[i].duration.value;
             }
+
+            // Place a marker at the halfway point
+            var distance = (0.5 * (totalDist / 1000)).toFixed(2);
+            marker = create_marker(start_location.latlng,"Halfway point, distance wise", distance + " miles", distance + " miles");
             putMarkerOnRoute(50);
 
             totalDist = totalDist / 1000;
+
           }
 
+          // Places the marker's position to the halfway point
           function putMarkerOnRoute(percentage) {
             var distance = (percentage/100) * totalDist;
             var time = ((percentage/100) * totalTime/60).toFixed(2);
@@ -208,7 +234,7 @@ AutocompleteDirectionsHandler.prototype.route = function() {
               marker = create_marker(polyline.GetPointAtDistance(distance),"time: "+time,"marker");
             } else {
               marker.setPosition(polyline.GetPointAtDistance(distance));
-              marker.setTitle("time:"+time);
+              marker.setTitle("Halfway Point");
             }
           }
         }
