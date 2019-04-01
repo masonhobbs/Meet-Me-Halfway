@@ -13,6 +13,7 @@ $(document).ready(function(){
   var polyline = null;
   var info_window;
   var geocoder;
+  var places;
 });
 
 function initMap() {
@@ -28,12 +29,42 @@ function initMap() {
   });
   info_window = new google.maps.InfoWindow();
   geocoder = new google.maps.Geocoder();
-
+  places = new google.maps.places.PlacesService(map);
   new AutocompleteDirectionsHandler(map);
 }
 
+// Function for creating markers of the safe meeting places by the halfway point
+function create_marker(place) {
+    var gmarker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+    });
+
+    google.maps.event.addListener(gmarker, 'click', function() {
+        geocoder.geocode({'location': gmarker.getPosition()}, function(results, status) {
+            if(status == 'OK') {
+                var converted_address = results[0].formatted_address;
+                info_window.setContent(place.name + '<br>' + converted_address);
+                info_window.open(map,gmarker);
+            }
+            else {
+                alert("Error displaying marker information");
+            }
+       });
+    })
+}
+
+// Callback to draw markers from safe meeting place query
+function callback(results, status) {
+    console.log('oof2');
+    if(status == google.maps.places.PlacesServiceStatus.OK) {
+        for(var i = 0; i < results.length; i++) {
+            create_marker(results[i]);
+        }
+    }
+}
 // Marker for halfway point
-function create_marker(lat_lng, label, a_distance, b_distance) {
+function create_halfway_marker(lat_lng, label, a_distance, b_distance) {
   var content = '<b>' + label + '</b>';
   var marker = new google.maps.Marker({
     position: lat_lng,
@@ -49,19 +80,28 @@ function create_marker(lat_lng, label, a_distance, b_distance) {
     }
   });
   marker.myname = label;
-  var converted_address;
+
+  // Query for meeting places and display them
+  var safe_finder_req = {
+      location: marker.getPosition(),
+      radius: '12500 ',
+      name: 'police station'
+  }
+  places.nearbySearch(safe_finder_req, callback);
 
   // Display halfway point info when marker is clicked
   google.maps.event.addListener(marker, 'click', function() {
       // Convert GPS coords to address
       geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
           if(status == 'OK') {
-              converted_address = results[0].formatted_address;
+              var converted_address = results[0].formatted_address;
               info_window.setContent(content
                   + '<br>' + converted_address
                   + '<br>Distance from point A: ' + a_distance
                   + '<br>Distance from point B: ' + b_distance);
                   info_window.open(map,marker);
+
+            console.log(marker.getPosition());
           }
           else {
               alert("Error displaying marker information");
@@ -218,8 +258,7 @@ AutocompleteDirectionsHandler.prototype.route = function() {
             }
 
             // Place a marker at the halfway point
-            var distance = (0.5 * (totalDist / 1000)).toFixed(2);
-            marker = create_marker(start_location.latlng,"Halfway point, distance wise", distance + " miles", distance + " miles");
+            var distance = (0.25 * (totalDist / 1000)).toFixed(2);
             putMarkerOnRoute(50);
 
             totalDist = totalDist / 1000;
@@ -229,15 +268,11 @@ AutocompleteDirectionsHandler.prototype.route = function() {
           // Places the marker's position to the halfway point
           function putMarkerOnRoute(percentage) {
             var distance = (percentage/100) * totalDist;
+            var display_dist = (0.25 * (totalDist / 1000)).toFixed(2);
             var time = ((percentage/100) * totalTime/60).toFixed(2);
-            if (!marker) {
-              marker = create_marker(polyline.GetPointAtDistance(distance),"time: "+time,"marker");
-            } else {
-              marker.setPosition(polyline.GetPointAtDistance(distance));
-              marker.setTitle("Halfway Point");
+            var marker = create_halfway_marker(polyline.GetPointAtDistance(distance) ,"Halfway point, distance wise", display_dist + " miles", display_dist + " miles");
             }
           }
-        }
         else {
           window.alert('Directions request failed due to ' + status);
         }
