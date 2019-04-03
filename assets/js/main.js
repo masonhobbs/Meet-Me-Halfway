@@ -21,6 +21,7 @@ $(document).ready(function(){
   var polyline = null; // For routing out the path for halfway point marker
   var halfway_marker; // Storing halfway point marker
   var radius_handler; // Var for controlling radius extender on finding safe meeting places
+  var safe_places_display; // HTML div containing where to put the list of safe places
 
 });
 

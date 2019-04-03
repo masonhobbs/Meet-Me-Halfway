@@ -30,10 +30,11 @@ function callback(results, status) {
   if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
     radius_handler.extend_radius();
   }
-  // Draw all safe meeting places found, as markers
+  // Draw all safe meeting places found, as markers, and put the information in the display window
   else if(status == google.maps.places.PlacesServiceStatus.OK) {
     for(var i = 0; i < results.length; i++) {
       create_marker(results[i]);
+      add_safe_place(results[i]);
     }
   }
 }
@@ -58,5 +59,21 @@ function create_marker(place) {
         alert("Error displaying marker information");
       }
     });
-  })
+  });
+}
+
+// Stores safe place names and addresses
+function add_safe_place(place) {
+  safe_places_display = document.getElementById('safe-places');
+  geocoder.geocode({'location': place.geometry.location}, function(results, status) {
+    if(status == 'OK') {
+      var converted_address = results[0].formatted_address;
+      safe_places_display.innerHTML += (('<li class="list-group-item d-flex flex-wrap"><p class="col-md-8">' + place.name + '</p>')
+                                      + ('<button type="button" class="btn btn-primary col-md-4">Directions</button>')
+                                      + ('<p class="col-md-8">' + converted_address + '</p></li>'));
+    }
+    else {
+      console.log("Error finding a valid address for safe place: " + place.name);
+    }
+  });
 }

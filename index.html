@@ -14,11 +14,11 @@
 
   <body>
 
-    <div class="text-center">
+    <div class="text-center" id="title">
       <h1>Meet Me Halfway</h1>
     </div>
 
-     <div id="landing-page">
+     <div id="landing-page" class="col-md-8">
        <div id="form">
          <input id="origin-landing" name="origin" type="text"
            placeholder=" Enter an origin location">
@@ -49,7 +49,14 @@
        </div>
      </div>
 
-     <div id="map"></div>
+    <div id="map-container" class="d-flex">
+      <div id="map" class="col-md-8"></div>
+      <div class="col-md-4" id="safe-container">
+        <h4 class="text-center">Safe Places</h4>
+        <ul id="safe-places" class="list-group">
+        </ul>
+      </div>
+    </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpusDUWcoDL5Hv5NFvr35AcynWeog63yw&callback=initMap&libraries=places" defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
