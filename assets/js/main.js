@@ -1,4 +1,6 @@
-//JavaScript for fadeout of intial search buttons //
+/* Main file for initializing the Google Maps API - variables/services etc. */
+
+// Store all Google Maps API variables here; creates global scope for them
 $(document).ready(function(){
   $("#submit-btn").click(function(){
     //I want Google default map controls to be hidden upon loading landing page
@@ -9,11 +11,17 @@ $(document).ready(function(){
     document.getElementById('destination-input').value = document.getElementById('destination-landing').value;
   });
 
+  /* Maps service variables */
   var map;
-  var polyline = null;
   var info_window;
   var geocoder;
   var places;
+
+  /* Utility variables to use with maps */
+  var polyline = null; // For routing out the path for halfway point marker
+  var halfway_marker; // Storing halfway point marker
+  var radius_handler; // Var for controlling radius extender on finding safe meeting places
+
 });
 
 function initMap() {
@@ -22,6 +30,7 @@ function initMap() {
     center: {lat: 33.254521, lng: -97.152979},
     zoom: 13
   });
+  // Invisible route marker; don't need to see path for going from source to end address...
   polyline = new google.maps.Polyline({
     path: [],
     strokeColor: '#FF0000',
@@ -33,97 +42,6 @@ function initMap() {
   new AutocompleteDirectionsHandler(map);
 }
 
-// Function for creating markers of the safe meeting places by the halfway point
-function create_marker(place) {
-    var gmarker = new google.maps.Marker({
-        map: map,
-        position: place.geometry.location,
-        animation: google.maps.Animation.DROP,
-        icon: 'police-officer.png'
-    });
-
-    google.maps.event.addListener(gmarker, 'click', function() {
-        geocoder.geocode({'location': gmarker.getPosition()}, function(results, status) {
-            if(status == 'OK') {
-                var converted_address = results[0].formatted_address;
-                info_window.setContent(place.name + '<br>' + converted_address);
-                info_window.open(map,gmarker);
-            }
-            else {
-                alert("Error displaying marker information");
-            }
-       });
-    })
-}
-
-// Callback to draw markers from safe meeting place query
-function callback(results, status) {
-    console.log('oof2');
-    console.log(status);
-    while(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
-      console.log("status = 0");
-      create_halfway_marker.extend_radius();
-    }
-    if(status == google.maps.places.PlacesServiceStatus.OK) {
-        for(var i = 0; i < results.length; i++) {
-            create_marker(results[i]);
-        }
-    }
-}
-
-// Marker for halfway point
-function create_halfway_marker(lat_lng, label, a_distance, b_distance) {
-  var content = '<b>' + label + '</b>';
-  var marker = new google.maps.Marker({
-    position: lat_lng,
-    map: map,
-    title: label,
-    zIndex: Math.round(lat_lng.lat()*-100000)<<5,
-    icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 10.0,
-        fillColor: "#28ba39",
-        fillOpacity: 1.0,
-        strokeWeight: 1.0
-    }
-  });
-  marker.myname = label;
-
-  // Query for meeting places and display them
-  var safe_finder_req = {
-      location: marker.getPosition(),
-      radius: 1000,
-      name: 'police station'
-  }
-  places.nearbySearch(safe_finder_req, callback);
-  function extend_radius(){
-    console.log("extending radius..");
-    safe_finder_req[radius] = 1.1 * safe_finder_req[radius];
-    places.nearbySearch(safe_finder_req, callback);
-  }
-
-  // Display halfway point info when marker is clicked
-  google.maps.event.addListener(marker, 'click', function() {
-      // Convert GPS coords to address
-      geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
-          if(status == 'OK') {
-              var converted_address = results[0].formatted_address;
-              info_window.setContent(content
-                  + '<br>' + converted_address
-                  + '<br>Distance from point A: ' + a_distance
-                  + '<br>Distance from point B: ' + b_distance);
-                  info_window.open(map,marker);
-
-            console.log(marker.getPosition());
-          }
-          else {
-              alert("Error displaying marker information");
-          }
-     });
-  });
-
-  return marker;
-}
 
 /**
  * @constructor
@@ -134,7 +52,7 @@ function AutocompleteDirectionsHandler(map) {
   this.destinationPlaceId = null;
   this.travelMode = 'DRIVING';
   this.directionsService = new google.maps.DirectionsService;
-  this.directionsDisplay = new google.maps.DirectionsRenderer;
+  this.directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polyline}); // Initialize directions with an inivisible polyline; don't need to see route from A->B
   this.directionsDisplay.setMap(map);
 
   var originInput = document.getElementById('origin-input'); //data field on home/map page
@@ -230,62 +148,11 @@ AutocompleteDirectionsHandler.prototype.route = function() {
       function(response, status) {
         if (status === 'OK') {
           me.directionsDisplay.setDirections(response);
-
-          // For the route given, create a hidden line of it out of the response
-          polyline.setPath([]);
-          var bounds = new google.maps.LatLngBounds();
-          start_location = new Object();
-          end_location = new Object();
-          var route = response.routes[0];
-
-          var path = response.routes[0].overview_path;
-          var legs = response.routes[0].legs;
-          for (var i = 0; i < legs.length; i++) {
-            if (i == 0) {
-              start_location.latlng = legs[i].start_location;
-              start_location.address = legs[i].start_address;
-            }
-            end_location.latlng = legs[i].end_location;
-            end_location.address = legs[i].end_address;
-            var steps = legs[i].steps;
-            for (var j = 0; j < steps.length; j++) {
-              var nextSegment = steps[j].path;
-              for (k=0;k<nextSegment.length;k++) {
-                polyline.getPath().push(nextSegment[k]);
-                bounds.extend(nextSegment[k]);
-              }
-            }
-          }
-          // Determine total distance of entire route; used to find the halfway point
-          computeTotalDistance(response);
-
-          var totalDist = 0;
-          var totalTime = 0;
-          function computeTotalDistance(result) {
-            totalDist = 0;
-            totalTime = 0;
-            var myroute = result.routes[0];
-            for (i = 0; i < myroute.legs.length; i++) {
-              totalDist += myroute.legs[i].distance.value;
-              totalTime += myroute.legs[i].duration.value;
-            }
-
-            // Place a marker at the halfway point
-            var distance = (0.25 * (totalDist / 1000)).toFixed(2);
-            putMarkerOnRoute(50);
-
-            totalDist = totalDist / 1000;
-
-          }
-
-          // Places the marker's position to the halfway point
-          function putMarkerOnRoute(percentage) {
-            var distance = (percentage/100) * totalDist;
-            var display_dist = (0.25 * (totalDist / 1000)).toFixed(2);
-            var time = ((percentage/100) * totalTime/60).toFixed(2);
-            var marker = create_halfway_marker(polyline.GetPointAtDistance(distance) ,"Halfway point, distance wise", display_dist + " miles", display_dist + " miles");
-            }
-          }
+          // Find and mark halfway point (halfway_finder.js)
+          calculate_halfway_point(response);
+          // Look for meeting places with the specified criteria and starting default radius of 2 miles; 2 miles = 3218 meters (safe_place_finder.js)
+          radius_handler = find_meeting_places(3218, 'police station');
+        }
         else {
           window.alert('Directions request failed due to ' + status);
         }
