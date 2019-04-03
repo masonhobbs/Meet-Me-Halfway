@@ -37,7 +37,9 @@ function initMap() {
 function create_marker(place) {
     var gmarker = new google.maps.Marker({
         map: map,
-        position: place.geometry.location
+        position: place.geometry.location,
+        animation: google.maps.Animation.DROP,
+        icon: 'police-officer.png'
     });
 
     google.maps.event.addListener(gmarker, 'click', function() {
@@ -57,12 +59,18 @@ function create_marker(place) {
 // Callback to draw markers from safe meeting place query
 function callback(results, status) {
     console.log('oof2');
+    console.log(status);
+    while(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+      console.log("status = 0");
+      create_halfway_marker.extend_radius();
+    }
     if(status == google.maps.places.PlacesServiceStatus.OK) {
         for(var i = 0; i < results.length; i++) {
             create_marker(results[i]);
         }
     }
 }
+
 // Marker for halfway point
 function create_halfway_marker(lat_lng, label, a_distance, b_distance) {
   var content = '<b>' + label + '</b>';
@@ -84,10 +92,15 @@ function create_halfway_marker(lat_lng, label, a_distance, b_distance) {
   // Query for meeting places and display them
   var safe_finder_req = {
       location: marker.getPosition(),
-      radius: '12500 ',
+      radius: 1000,
       name: 'police station'
   }
   places.nearbySearch(safe_finder_req, callback);
+  function extend_radius(){
+    console.log("extending radius..");
+    safe_finder_req[radius] = 1.1 * safe_finder_req[radius];
+    places.nearbySearch(safe_finder_req, callback);
+  }
 
   // Display halfway point info when marker is clicked
   google.maps.event.addListener(marker, 'click', function() {
