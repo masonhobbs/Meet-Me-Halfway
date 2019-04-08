@@ -74,11 +74,21 @@ function add_safe_place(place) {
     if(status == 'OK') {
       var converted_address = results[0].formatted_address;
       safe_places_display.innerHTML += (('<li class="list-group-item d-flex flex-wrap"><p class="col-md-8">' + place.name + '</p>')
-                                      + ('<button type="button" class="btn btn-primary col-md-4"' + 'onclick="navigate_to(' + "'" + converted_address + "'" + ')">Directions</button>')
-                                      + ('<p class="col-md-8">' + converted_address + '</p></li>'));
+      + ('<button type="button" class="btn btn-primary col-md-4"' + 'onclick="navigate_to(' + "'" + converted_address + "'" + ')">Directions</button>')
+      + ('<p class="col-md-8">' + converted_address + '</p></li>'));
+    }
+    else if(status == 'OVER_QUERY_LIMIT'){
+      // Wait some time and try again
+      sleep(500).then(() => {
+        add_safe_place(place);
+      });
     }
     else {
-      console.log("Error finding a valid address for safe place: " + place.name);
+      console.log("[" + status + "]Error finding a valid address for safe place: " + place.name);
     }
   });
+}
+
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
 }
