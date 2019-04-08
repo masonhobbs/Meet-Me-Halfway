@@ -66,6 +66,8 @@ function create_halfway_marker(lat_lng, label, a_distance, b_distance) {
   });
   halfway_marker.myname = label;
 
+  all_markers.push(halfway_marker);
+  
   // Display halfway point info when marker is clicked
   google.maps.event.addListener(halfway_marker, 'click', function() {
     // Convert GPS coords to address

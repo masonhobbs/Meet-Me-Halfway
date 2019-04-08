@@ -3,12 +3,29 @@
 // Store all Google Maps API variables here; creates global scope for them
 $(document).ready(function(){
   $("#submit-btn").click(function(){
-    //I want Google default map controls to be hidden upon loading landing page
-    $("#origin-landing").animate({left: '150%'}, 800);
-    $("#destination-landing").animate({right: '150%'}, 800);
-    $("#landing-page").fadeOut(1200);
-    document.getElementById('origin-input').value = document.getElementById('origin-landing').value
-    document.getElementById('destination-input').value = document.getElementById('destination-landing').value;
+    var checkboxes = false;
+
+    if($('#police-check').is(":checked"))
+      checkboxes = true;
+    if($('#restaurants-check').is(":checked"))
+      checkboxes = true;
+    if($('#schools-check').is(":checked"))
+      checkboxes = true;
+    if($('#hospitals-check').is(":checked"))
+      checkboxes = true;
+
+    if(!checkboxes)
+      alert("Please check at least one type of safe place");
+
+    else {
+      //I want Google default map controls to be hidden upon loading landing page
+      $("#origin-landing").animate({left: '150%'}, 800);
+      $("#destination-landing").animate({right: '150%'}, 800);
+      $("#landing-page").fadeOut(1200);
+      document.getElementById('origin-input').value = document.getElementById('origin-landing').value
+      document.getElementById('destination-input').value = document.getElementById('destination-landing').value;
+      route_handler.route();
+    }
   });
 
   /* Maps service variables */
@@ -16,13 +33,14 @@ $(document).ready(function(){
   var info_window;
   var geocoder;
   var places;
+  var autocomplete_handle;
 
   /* Utility variables to use with maps */
   var polyline = null; // For routing out the path for halfway point marker
   var halfway_marker; // Storing halfway point marker
   var radius_handler; // Var for controlling radius extender on finding safe meeting places
   var safe_places_display; // HTML div containing where to put the list of safe places
-
+  var all_markers;
 });
 
 function initMap() {
@@ -40,7 +58,8 @@ function initMap() {
   info_window = new google.maps.InfoWindow();
   geocoder = new google.maps.Geocoder();
   places = new google.maps.places.PlacesService(map);
-  new AutocompleteDirectionsHandler(map);
+  route_handler = new AutocompleteDirectionsHandler(map);
+  all_markers = [];
 }
 
 
@@ -96,6 +115,7 @@ function AutocompleteDirectionsHandler(map) {
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(
       destinationInput);
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(modeSelector);
+
 }
 
 // Sets a listener on a radio button to change the filter type on Places
@@ -128,7 +148,7 @@ AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(
     } else {
       me.destinationPlaceId = place.place_id;
     }
-    me.route();
+  //  me.route();
   });
 };
 
@@ -152,10 +172,47 @@ AutocompleteDirectionsHandler.prototype.route = function() {
           // Find and mark halfway point (halfway_finder.js)
           calculate_halfway_point(response);
           // Look for meeting places with the specified criteria and starting default radius of 2 miles; 2 miles = 3218 meters (safe_place_finder.js)
-          radius_handler = find_meeting_places(3218, 'police station');
+          radius_handler = find_meeting_places(3218);
         }
         else {
           window.alert('Directions request failed due to ' + status);
         }
       });
 };
+
+function navigate_to(address) {
+  var origin = document.getElementById('origin-input').value;
+  document.getElementById('destination-input').value = address;
+  polyline = new google.maps.Polyline({
+    path: [],
+    strokeColor: '#4288ce',
+    strokeWeight: 5
+  });
+
+  // Clear any existing routes/markers
+  route_handler.directionsDisplay.set('directions', null);
+  route_handler.directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polyline});
+  route_handler.directionsDisplay.setMap(map);
+
+  // Draw route from A -> chosen safe place
+  route_handler.directionsService.route({
+    origin: origin,
+    destination: address,
+    travelMode: route_handler.travelMode
+  }, function(response, status) {
+      if(status === 'OK') {
+        // Clear all markers
+        for(var i = 0; i < all_markers.length; i++) {
+          all_markers[i].setMap(null);
+        }
+        route_handler.directionsDisplay.setDirections(response);
+        //idea: clear out safe places list, replaces with directions
+        //document.getElementById('safe-places').innerHTML = '';
+        //add directions here
+      }
+      else{
+        console.log("failed");
+      }
+  });
+
+}

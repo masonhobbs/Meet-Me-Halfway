@@ -52,7 +52,21 @@
     <div id="map-container" class="d-flex">
       <div id="map" class="col-md-8"></div>
       <div class="col-md-4" id="safe-container">
-        <h4 class="text-center">Safe Places</h4>
+        <h4 class="text-left pl-3">Safe Places</h4>
+        <div class="d-inline-flex flex-wrap">
+          <span class="col-md-6 mb-2">
+            <input id="police-check" name="police" type="checkbox" value="police station" class="mr-2">Police Stations
+          </span>
+          <span class="col-md-6 mb-2">
+            <input id="restaurants-check" name="restaurant" type="checkbox" value="restaurant" class="mr-2">Restaurants
+          </span>
+          <span class="col-md-6 mb-2">
+            <input id="schools-check" name="school" type="checkbox" value="school" class="mr-2">Schools
+          </span>
+          <span class="col-md-6 mb-2">
+            <input id="hospitals-check" name="hospital" type="checkbox" value="hospital" class="mr-2">Hospitals
+          </span>
+        </div>
         <ul id="safe-places" class="list-group">
         </ul>
       </div>

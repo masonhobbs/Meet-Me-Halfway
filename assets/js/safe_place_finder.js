@@ -1,43 +1,47 @@
 /* safe_place_finder.js: for handling all things relating to finding safe meeting places */
 
-
 // Make a request to query for safe meeting places
-function find_meeting_places(radius, search_term) {
-  var safe_finder_req = {
-    location: halfway_marker.getPosition(),
-    radius: radius,
-    name: search_term
-  }
-  places.nearbySearch(safe_finder_req, callback);
+function find_meeting_places(radius) {
+  var safe_places_filter = [];
+  if($('#police-check').is(":checked"))
+    safe_places_filter.push("police station");
+  if($('#restaurants-check').is(":checked"))
+    safe_places_filter.push("restaurant");
+  if($('#schools-check').is(":checked"))
+    safe_places_filter.push("school");
+  if($('#hospitals-check').is(":checked"))
+    safe_places_filter.push("hospital");
 
-  // Extends the search radius by 2 miles; 2 miles = ~3218 meters
-  function extend_radius(){
-    console.log("extending radius..");
-    safe_finder_req.radius = safe_finder_req.radius + 3218;
-    console.log(safe_finder_req);
-    places.nearbySearch(safe_finder_req, callback);
+  for(var i = 0; i < safe_places_filter.length; i++) {
+    var safe_finder_req = {
+      location: halfway_marker.getPosition(),
+      radius: radius,
+      name: safe_places_filter[i]
+    }
+    console.log("Searching for: " + safe_finder_req.name);
+    search_request(safe_finder_req);
   }
-
-  return {
-    extend_radius: extend_radius
-  };
 }
 
-// Callback to draw markers from safe meeting place query
-function callback(results, status) {
-  console.log(status);
-  // 0 meeting places found; try again with a larger radius
-  if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
-    radius_handler.extend_radius();
-  }
-  // Draw all safe meeting places found, as markers, and put the information in the display window
-  else if(status == google.maps.places.PlacesServiceStatus.OK) {
-    for(var i = 0; i < results.length; i++) {
-      create_marker(results[i]);
-      add_safe_place(results[i]);
+function search_request(place) {
+  places.nearbySearch(place, callback);
+  function callback(results, status) {
+    // 0 meeting places found; try again with a larger radius
+    if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+      place.radius = place.radius + 3218;
+      places.nearbySearch(place, callback);
+    }
+    // Draw all safe meeting places found, as markers, and put the information in the display window
+    else if(status == google.maps.places.PlacesServiceStatus.OK) {
+      for(var i = 0; i < results.length; i++) {
+        create_marker(results[i]);
+        add_safe_place(results[i]);
+      }
+      console.log(place.name + " search done");
     }
   }
 }
+
 
 // Function for creating markers of the safe meeting places by the halfway point
 function create_marker(place) {
@@ -48,6 +52,7 @@ function create_marker(place) {
     icon: 'police-officer.png'
   });
 
+  all_markers.push(gmarker);
   google.maps.event.addListener(gmarker, 'click', function() {
     geocoder.geocode({'location': gmarker.getPosition()}, function(results, status) {
       if(status == 'OK') {
@@ -69,7 +74,7 @@ function add_safe_place(place) {
     if(status == 'OK') {
       var converted_address = results[0].formatted_address;
       safe_places_display.innerHTML += (('<li class="list-group-item d-flex flex-wrap"><p class="col-md-8">' + place.name + '</p>')
-                                      + ('<button type="button" class="btn btn-primary col-md-4">Directions</button>')
+                                      + ('<button type="button" class="btn btn-primary col-md-4"' + 'onclick="navigate_to(' + "'" + converted_address + "'" + ')">Directions</button>')
                                       + ('<p class="col-md-8">' + converted_address + '</p></li>'));
     }
     else {
