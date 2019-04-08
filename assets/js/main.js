@@ -180,7 +180,7 @@ AutocompleteDirectionsHandler.prototype.route = function() {
       });
 };
 
-function navigate_to(address) {
+function view_route(address) {
   var origin = document.getElementById('origin-input').value;
   document.getElementById('destination-input').value = address;
   polyline = new google.maps.Polyline({
@@ -214,5 +214,24 @@ function navigate_to(address) {
         console.log("failed");
       }
   });
+}
 
+function navigate_to(address) {
+  var base_url = "https://www.google.com/maps/dir/";
+  var start = replace_whitespace(document.getElementById('origin-input').value);
+  var destination = replace_whitespace(address);
+
+  var result = base_url + start + "/" + destination;
+  window.open(result);
+}
+
+function replace_whitespace(input) {
+  var output = "";
+  for(var i = 0; i < input.length; i++) {
+    if(input[i] == ' ')
+      output += '+';
+    else
+      output += input[i];
+  }
+  return output;
 }
