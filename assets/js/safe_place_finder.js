@@ -34,7 +34,6 @@ function search_request(place) {
     // Draw all safe meeting places found, as markers, and put the information in the display window
     else if(status == google.maps.places.PlacesServiceStatus.OK) {
       $(".check-places").remove();
-      $(".check-toll").remove();
       for(var i = 0; i < results.length; i++) {
         create_marker(results[i]);
         add_safe_place(results[i]);

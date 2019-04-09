@@ -157,13 +157,15 @@ AutocompleteDirectionsHandler.prototype.route = function() {
     return;
   }
   var me = this;
+  var tolls = toll_answer();
 
   // Requests a route from origin to destination based off autocompleted addresses
   this.directionsService.route(
       {
         origin: {'placeId': this.originPlaceId},
         destination: {'placeId': this.destinationPlaceId},
-        travelMode: this.travelMode
+        travelMode: this.travelMode,
+        avoidTolls: tolls
       },
       // Handle response back
       function(response, status) {
@@ -182,6 +184,8 @@ AutocompleteDirectionsHandler.prototype.route = function() {
 
 function view_route(address) {
   var origin = document.getElementById('origin-input').value;
+  var tolls = toll_answer();
+  console.log(tolls);
   document.getElementById('destination-input').value = address;
   polyline = new google.maps.Polyline({
     path: [],
@@ -194,8 +198,6 @@ function view_route(address) {
   route_handler.directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polyline});
   route_handler.directionsDisplay.setMap(map);
 
-  var tolls = toll_answer();
-  console.log(tolls);
   // Draw route from A -> chosen safe place
   route_handler.directionsService.route({
     origin: origin,
@@ -240,11 +242,14 @@ function replace_whitespace(input) {
 }
 
 function toll_answer(){
-  console.log("getting here??");
   if($('#avoid_toll').is(":checked")){
-    console.log("true");
     return true;}
-  else if($('#allow_toll').is(":checked")){
-    console.log("false");
+  else{
     return false;}
 }
+
+$('#avoid_toll').click(function() {
+  console.log("changing..");
+  var address = document.getElementById('destination-input').value;
+  view_route(address);
+});
