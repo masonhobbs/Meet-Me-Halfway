@@ -74,7 +74,8 @@ function add_safe_place(place) {
   geocoder.geocode({'location': place.geometry.location}, function(results, status) {
     if(status == 'OK') {
       var converted_address = results[0].formatted_address;
-      safe_places_display.innerHTML += (('<li class="list-group-item d-flex flex-wrap"><p class="col-md-8">' + place.name + '</p>')
+      safe_places_display.innerHTML += (('<li class="list-group-item d-flex flex-wrap" id="' + converted_address + '">'
+      + '<p class="col-md-8">' + place.name + '</p>')
       + ('<button type="button" class="btn btn-primary col-md-4 align-self-center"' + 'onclick="view_route(' + "'" + converted_address + "'" + ')">View Route</button>')
       + ('<p class="col-md-8">' + converted_address + '</p>')
       + ('<button type="button" class="btn btn-success col-md-4 align-self-center"' + 'onclick="navigate_to(' + "'" + converted_address + "'" + ')">Directions</button></li>'))

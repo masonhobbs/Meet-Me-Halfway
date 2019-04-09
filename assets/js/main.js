@@ -184,6 +184,9 @@ AutocompleteDirectionsHandler.prototype.route = function() {
 
 function view_route(address) {
   var origin = document.getElementById('origin-input').value;
+  // returns the <li> object of the safe place being viewed right now
+  var place_viewing = document.getElementById(address);
+
   var tolls = toll_answer();
   console.log(tolls);
   document.getElementById('destination-input').value = address;
