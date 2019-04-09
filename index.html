@@ -16,6 +16,7 @@
 
     <div class="text-center" id="title">
       <h1>Meet Me Halfway</h1>
+      <img src="https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png" height="20px" width="15px">---------------------------<img src="placeholder.png">---------------------------<img src="https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png" height="20px" width="15px">
     </div>
 
      <div id="landing-page" class="col-md-8">
@@ -53,7 +54,7 @@
       <div id="map" class="col-md-8"></div>
       <div class="col-md-4" id="safe-container">
         <h4 class="text-left pl-3">Safe Places</h4>
-        <div class="d-inline-flex flex-wrap">
+        <div class="d-inline-flex flex-wrap check-places">
           <span class="col-md-6 mb-2">
             <input id="police-check" name="police" type="checkbox" value="police station" class="mr-2">Police Stations
           </span>
@@ -67,6 +68,15 @@
             <input id="hospitals-check" name="hospital" type="checkbox" value="hospital" class="mr-2">Hospitals
           </span>
         </div>
+        <h4 class="text-left pl-3">Avoid Tolls?</h4>
+        <form>
+          <div class="check-toll">
+            <span class="col-md-6 mb-2">
+              <input id="avoid_toll" name="tolls" type="radio" value="Yes" class="mr-2">Yes</span>
+            <span class="col-md-6 mb-2">
+              <input id="allow_toll" name="tolls" type="radio" value="No" class="mr-2">No</span>
+          </div>
+        </form>
         <ul id="safe-places" class="list-group">
         </ul>
       </div>

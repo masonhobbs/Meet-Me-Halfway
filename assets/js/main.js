@@ -194,11 +194,14 @@ function view_route(address) {
   route_handler.directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polyline});
   route_handler.directionsDisplay.setMap(map);
 
+  var tolls = toll_answer();
+  console.log(tolls);
   // Draw route from A -> chosen safe place
   route_handler.directionsService.route({
     origin: origin,
     destination: address,
-    travelMode: route_handler.travelMode
+    travelMode: route_handler.travelMode,
+    avoidTolls: tolls
   }, function(response, status) {
       if(status === 'OK') {
         // Clear all markers
@@ -234,4 +237,14 @@ function replace_whitespace(input) {
       output += input[i];
   }
   return output;
+}
+
+function toll_answer(){
+  console.log("getting here??");
+  if($('#avoid_toll').is(":checked")){
+    console.log("true");
+    return true;}
+  else if($('#allow_toll').is(":checked")){
+    console.log("false");
+    return false;}
 }
