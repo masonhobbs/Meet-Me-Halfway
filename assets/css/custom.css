@@ -1,7 +1,7 @@
 /* Always set the map height explicitly to define the size of the div
 * element that contains the map. */
 #map-container {
-    height: calc(100% - 86px);
+    height: calc(100% - 112.67px);
 }
 
 #map {

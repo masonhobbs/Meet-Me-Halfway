@@ -33,6 +33,7 @@ function search_request(place) {
     }
     // Draw all safe meeting places found, as markers, and put the information in the display window
     else if(status == google.maps.places.PlacesServiceStatus.OK) {
+      $(".check-places").remove();
       for(var i = 0; i < results.length; i++) {
         create_marker(results[i]);
         add_safe_place(results[i]);
@@ -49,7 +50,7 @@ function create_marker(place) {
     map: map,
     position: place.geometry.location,
     animation: google.maps.Animation.DROP,
-    icon: 'police-officer.png'
+    icon: 'placeholder.png'
   });
 
   all_markers.push(gmarker);

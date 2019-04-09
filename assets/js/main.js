@@ -157,13 +157,15 @@ AutocompleteDirectionsHandler.prototype.route = function() {
     return;
   }
   var me = this;
+  var tolls = toll_answer();
 
   // Requests a route from origin to destination based off autocompleted addresses
   this.directionsService.route(
       {
         origin: {'placeId': this.originPlaceId},
         destination: {'placeId': this.destinationPlaceId},
-        travelMode: this.travelMode
+        travelMode: this.travelMode,
+        avoidTolls: tolls
       },
       // Handle response back
       function(response, status) {
@@ -182,6 +184,8 @@ AutocompleteDirectionsHandler.prototype.route = function() {
 
 function view_route(address) {
   var origin = document.getElementById('origin-input').value;
+  var tolls = toll_answer();
+  console.log(tolls);
   document.getElementById('destination-input').value = address;
   polyline = new google.maps.Polyline({
     path: [],
@@ -198,7 +202,8 @@ function view_route(address) {
   route_handler.directionsService.route({
     origin: origin,
     destination: address,
-    travelMode: route_handler.travelMode
+    travelMode: route_handler.travelMode,
+    avoidTolls: tolls
   }, function(response, status) {
       if(status === 'OK') {
         // Clear all markers
@@ -235,3 +240,16 @@ function replace_whitespace(input) {
   }
   return output;
 }
+
+function toll_answer(){
+  if($('#avoid_toll').is(":checked")){
+    return true;}
+  else{
+    return false;}
+}
+
+$('#avoid_toll').click(function() {
+  console.log("changing..");
+  var address = document.getElementById('destination-input').value;
+  view_route(address);
+});
