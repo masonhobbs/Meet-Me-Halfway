@@ -3,8 +3,8 @@
 // Store all Google Maps API variables here; creates global scope for them
 $(document).ready(function(){
   $("#submit-btn").click(function(){
+    // For checking if user has selected at least one type of safe place
     var checkboxes = false;
-
     if($('#police-check').is(":checked"))
       checkboxes = true;
     if($('#restaurants-check').is(":checked"))
@@ -17,14 +17,21 @@ $(document).ready(function(){
     if(!checkboxes)
       alert("Please check at least one type of safe place");
 
+    // All criteria satisfied - move user along
     else {
-      //I want Google default map controls to be hidden upon loading landing page
-      $("#origin-landing").animate({left: '150%'}, 800);
-      $("#destination-landing").animate({right: '150%'}, 800);
-      $("#landing-page").fadeOut(1200);
-      document.getElementById('origin-input').value = document.getElementById('origin-landing').value
-      document.getElementById('destination-input').value = document.getElementById('destination-landing').value;
-      route_handler.route();
+      var test_route = route_handler.route();
+      if(!test_route) {
+        alert("Please select addresses from the autocomplete dropdown menu.");
+      }
+      else {
+        //I want Google default map controls to be hidden upon loading landing page
+        $("#origin-landing").animate({left: '150%'}, 800);
+        $("#destination-landing").animate({right: '150%'}, 800);
+        $("#landing-page").fadeOut(1200);
+        document.getElementById('origin-input').value = document.getElementById('origin-landing').value
+        document.getElementById('destination-input').value = document.getElementById('destination-landing').value;
+      }
+
     }
   });
 
@@ -58,8 +65,9 @@ function initMap() {
   info_window = new google.maps.InfoWindow();
   geocoder = new google.maps.Geocoder();
   places = new google.maps.places.PlacesService(map);
-  route_handler = new AutocompleteDirectionsHandler(map);
   all_markers = [];
+  route_handler = new AutocompleteDirectionsHandler(map);
+
 }
 
 
@@ -140,7 +148,7 @@ AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(
     var place = autocomplete.getPlace();
 
     if (!place.place_id) {
-      window.alert('Please select an option from the dropdown list.');
+      alert('Please select an option from the dropdown list.');
       return;
     }
     if (mode === 'ORIG') {
@@ -154,7 +162,7 @@ AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(
 
 AutocompleteDirectionsHandler.prototype.route = function() {
   if (!this.originPlaceId || !this.destinationPlaceId) {
-    return;
+    return false;
   }
   var me = this;
   var tolls = toll_answer();
@@ -180,6 +188,8 @@ AutocompleteDirectionsHandler.prototype.route = function() {
           window.alert('Directions request failed due to ' + status);
         }
       });
+  return true;
+
 };
 
 function view_route(address) {
