@@ -51,12 +51,12 @@
      </div>
 
     <div id="map-container" class="d-flex">
-      <div id="map" class="col-md-8"></div>
       <div class="col-md-4" id="safe-container">
         <h4 class="text-left pl-3">Safe Places</h4>
+        <hr id="line">
         <div class="d-inline-flex flex-wrap check-places">
           <span class="col-md-6 mb-2">
-            <input id="police-check" name="police" type="checkbox" value="police station" class="mr-2">Police Stations
+            <input id="police-check" name="police" type="checkbox" value="police station" class="mr-2" checked>Police Stations
           </span>
           <span class="col-md-6 mb-2">
             <input id="restaurants-check" name="restaurant" type="checkbox" value="restaurant" class="mr-2">Restaurants
@@ -70,12 +70,11 @@
         </div>
         <ul id="safe-places" class="list-group">
         </ul>
-        <div class="check-toll">
-          <hr>
-          <span class="col-md-6 mb-2">
-            <input id="avoid_toll" name="tolls" type="checkbox" value="Yes"> Avoid Tolls</span>
+        <div class="sticky">
+            <span class="col-md-6 mb-2"><input id="avoid_toll" name="tolls" type="checkbox" value="Yes"> Avoid Tolls</span>
         </div>
       </div>
+      <div id="map" class="col-md-8"></div>
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpusDUWcoDL5Hv5NFvr35AcynWeog63yw&callback=initMap&libraries=places" defer></script>
