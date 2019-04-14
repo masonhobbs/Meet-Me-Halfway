@@ -263,9 +263,12 @@ function toll_answer(){
 }
 
 $('#avoid_toll').click(function() {
-  console.log("changing..");
   var address = document.getElementById('destination-input').value;
   var place_viewing = document.getElementById(address);
-  $(place_viewing).css("background-color", "red");
-  view_route(address);
+  if($(place_viewing).css('background-color') == 'rgb(179, 212, 252)') {
+   view_route(address);
+  } else {
+    window.alert('Please choose a route to view.');
+    $('#avoid_toll').prop('checked', false);
+  }
 });

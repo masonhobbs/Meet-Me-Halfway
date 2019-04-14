@@ -1,7 +1,7 @@
 /* Always set the map height explicitly to define the size of the div
 * element that contains the map. */
 #map-container {
-    height: calc(100% - 112.67px);
+    height: 100%;
 }
 
 
@@ -64,7 +64,7 @@ h4 {
 /*Landing page overlay*/
 #landing-page {
   position: absolute;
-  height: calc(100% - 112.67px);
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   text-align: center;
   z-index: 3;
@@ -115,6 +115,16 @@ div.sticky {
   margin-bottom: 10px;
 }
 
+.check-places input[type='checkbox'] {
+    width:20px;
+    height:20px;
+    border-radius:5px;
+    border:2px solid #555;
+}
+
 .option {
   border-color: black;
+  background-color: white;
+  width: 100%;
+  padding: 10px;
 }

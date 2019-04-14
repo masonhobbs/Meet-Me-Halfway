@@ -9,15 +9,11 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="stylesheet" href="assets/css/custom.css">
   </head>
 
   <body>
-
-    <div class="text-center" id="title">
-      <h1>Meet Me Halfway</h1>
-      <img src="https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png" height="20px" width="15px">---------------------------<img src="placeholder.png">---------------------------<img src="https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png" height="20px" width="15px">
-    </div>
 
      <div id="landing-page" class="col-md-8">
        <div id="form">
@@ -52,21 +48,25 @@
 
     <div id="map-container" class="d-flex">
       <div class="col-md-4" id="safe-container">
+        <center>
+          <h1>Meet Me Halfway</h1>
+          <img src="https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png" height="20px" width="15px">-----------<img src="placeholder.png">-----------<img src="https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png" height="20px" width="15px">
+        </center>
         <h4 class="text-left pl-3">Safe Places</h4>
         <hr id="line">
         <div class="d-inline-flex flex-wrap check-places">
-          <span class="col-md-6 mb-2 option">
-            <input id="police-check" name="police" type="checkbox" value="police station" class="mr-2 option" checked>Police Stations
-          </span>
-          <span class="col-md-6 mb-2 option">
-            <input id="restaurants-check" name="restaurant" type="checkbox" value="restaurant" class="mr-2">Restaurants
-          </span>
-          <span class="col-md-6 mb-2 option">
-            <input id="schools-check" name="school" type="checkbox" value="school" class="mr-2">Schools
-          </span>
-          <span class="col-md-6 mb-2 option">
-            <input id="hospitals-check" name="hospital" type="checkbox" value="hospital" class="mr-2">Hospitals
-          </span>
+          <button class="col-md-6 mb-2 option">
+            <input id="police-check" name="police" type="checkbox" value="police station" class="mr-2" checked><i class="fas fa-3x fa-user-shield"></i><br>Police Stations
+          </button>
+          <button class="col-md-6 mb-2 option">
+            <input id="restaurants-check" name="restaurant" type="checkbox" value="restaurant" class="mr-2"><i class="fas fa-3x fa-utensils"></i><br>Restaurants
+          </button>
+          <button class="col-md-6 mb-2 option">
+            <input id="schools-check" name="school" type="checkbox" value="school" class="mr-2"><i class="fas fa-3x fa-school"></i><br>Schools
+          </button>
+          <button class="col-md-6 mb-2 option">
+            <input id="hospitals-check" name="hospital" type="checkbox" value="hospital" class="mr-2"><i class="fas fa-3x fa-hospital"></i><br>Hospitals
+          </button>
         </div>
         <ul id="safe-places" class="list-group">
         </ul>
