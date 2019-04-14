@@ -197,6 +197,7 @@ function view_route(address) {
   // returns the <li> object of the safe place being viewed right now
   var place_viewing = document.getElementById(address);
   $(place_viewing).css("background-color", "#b3d4fc");
+  $(place_viewing).siblings().css("background-color", "white");
   var tolls = toll_answer();
   console.log(tolls);
   document.getElementById('destination-input').value = address;
@@ -264,5 +265,7 @@ function toll_answer(){
 $('#avoid_toll').click(function() {
   console.log("changing..");
   var address = document.getElementById('destination-input').value;
+  var place_viewing = document.getElementById(address);
+  $(place_viewing).css("background-color", "red");
   view_route(address);
 });
