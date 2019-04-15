@@ -15,7 +15,7 @@
 
   <body>
 
-     <div id="landing-page" class="col-md-8">
+     <div id="landing-page" class="col-sm-6 col-md-8">
        <div id="form">
          <input id="origin-landing" name="origin" type="text"
            placeholder=" Enter an origin location">
@@ -54,19 +54,23 @@
         </center>
         <h4 class="text-left pl-3">Safe Places</h4>
         <hr id="line">
-        <div class="d-inline-flex flex-wrap check-places">
-          <button class="col-md-6 mb-2 option">
-            <input id="police-check" name="police" type="checkbox" value="police station" class="mr-2" checked><i class="fas fa-3x fa-user-shield"></i><br>Police Stations
-          </button>
-          <button class="col-md-6 mb-2 option">
-            <input id="restaurants-check" name="restaurant" type="checkbox" value="restaurant" class="mr-2"><i class="fas fa-3x fa-utensils"></i><br>Restaurants
-          </button>
-          <button class="col-md-6 mb-2 option">
-            <input id="schools-check" name="school" type="checkbox" value="school" class="mr-2"><i class="fas fa-3x fa-school"></i><br>Schools
-          </button>
-          <button class="col-md-6 mb-2 option">
-            <input id="hospitals-check" name="hospital" type="checkbox" value="hospital" class="mr-2"><i class="fas fa-3x fa-hospital"></i><br>Hospitals
-          </button>
+        <div class="check-places">
+          <div class="option">
+            <input id="police-check" name="police" type="checkbox" value="police station" checked>
+            <label for="police-check">Police Stations</label>
+          </div>
+          <div class="option">
+            <input id="restaurants-check" name="restaurant" type="checkbox" value="restaurant">
+            <label for="restaurants-check">Restaruants</label>
+          </div>
+          <div class="option">
+            <input id="schools-check" name="school" type="checkbox" value="school">
+            <label for="schools-check">Schools</label>
+          </div>
+          <div class="option">
+            <input id="hospitals-check" name="hospital" type="checkbox" value="hospital">
+            <label for="hospitals-check">Hospitals</label>
+          </div>
         </div>
         <ul id="safe-places" class="list-group">
         </ul>
