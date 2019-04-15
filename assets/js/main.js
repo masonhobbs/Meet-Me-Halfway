@@ -196,7 +196,8 @@ function view_route(address) {
   var origin = document.getElementById('origin-input').value;
   // returns the <li> object of the safe place being viewed right now
   var place_viewing = document.getElementById(address);
-
+  $(place_viewing).css("background-color", "#b3d4fc");
+  $(place_viewing).siblings().css("background-color", "white");
   var tolls = toll_answer();
   console.log(tolls);
   document.getElementById('destination-input').value = address;
@@ -262,7 +263,12 @@ function toll_answer(){
 }
 
 $('#avoid_toll').click(function() {
-  console.log("changing..");
   var address = document.getElementById('destination-input').value;
-  view_route(address);
+  var place_viewing = document.getElementById(address);
+  if($(place_viewing).css('background-color') == 'rgb(179, 212, 252)') {
+   view_route(address);
+  } else {
+    window.alert('Please choose a route to view.');
+    $('#avoid_toll').prop('checked', false);
+  }
 });

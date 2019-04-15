@@ -1,19 +1,20 @@
 /* Always set the map height explicitly to define the size of the div
 * element that contains the map. */
 #map-container {
-    height: calc(100% - 112.67px);
+    height: 100%;
 }
 
-#map {
-  border:4px solid #000000;
-}
+
 /* Optional: Makes the sample page fill the window. */
 html, body {
   height: 100%;
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
+h1, h4 {
+  padding-top: 5%;
+}
 /*Origin and Destination buttons */
 .controls {
   margin-top: 10px;
@@ -63,14 +64,15 @@ html, body {
 /*Landing page overlay*/
 #landing-page {
   position: absolute;
-  height: calc(100% - 86px);
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   text-align: center;
   z-index: 3;
+  right: 0;
+  padding-top: 20%;
 }
 
 #form {
-  margin: auto;
   height: 100%;
 }
 #landing-page input, #landing-page button{
@@ -88,9 +90,118 @@ html, body {
 }
 
 #map {
-  z-index: 1;
+  z-index: 0;
 }
 
 #safe-container {
-  overflow: scroll;
+  overflow-y: auto;
+  box-shadow: 5px 0 5px -2px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  height: 100%;
+}
+
+div.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  color: white;
+  bottom: 0;
+  background-color: #4d90fe;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  border-radius: 2px;
+  margin-top: 1%;
+}
+
+#line{
+  border-color: #4d90fe;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.check-places{
+  width: 100%;
+}
+
+.option {
+  border: solid;
+  border-color: black;
+  background-color: white;
+  margin: 1%;
+  padding: 3%;
+  border-radius: 3%;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.option label{
+  width: 100%;
+  display: block;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0;
+  font-weight: bolder;
+}
+
+.option label::before{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  content: '';
+  background-color: #4d90fe;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale3d(1, 1, 1);
+  transition: all 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  opacity: 0;
+  z-index: -1;
+}
+
+.option label::after{
+  width: 25px;
+  height: 25px;
+  content: '';
+  border: 2px solid #D1D7DC;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg width='25' height='25' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
+  background-repeat: no-repeat;
+  background-position: 2px 3px;
+  border-radius: 50%;
+  z-index: 1;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: all 200ms ease-in;
+}
+
+.option input:checked ~ label {
+  color: #fff;
+}
+
+.option input:checked ~ label::before{
+  transform: translate(-50%, -50%) scale3d(56, 56, 1);
+  opacity: 1;
+}
+
+.option input:checked ~ label::after{
+  background-color: #54E0C7;
+  border-color: #54E0C7;
+}
+
+.option input{
+  width: 25px;
+  height: 25px;
+  order: 1;
+  z-index: 1;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  visibility: hidden;
 }
