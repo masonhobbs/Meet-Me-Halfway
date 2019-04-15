@@ -69,10 +69,10 @@ h1, h4 {
   text-align: center;
   z-index: 3;
   right: 0;
+  padding-top: 20%;
 }
 
 #form {
-  margin: auto;
   height: 100%;
 }
 #landing-page input, #landing-page button{
