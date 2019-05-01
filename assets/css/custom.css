@@ -27,6 +27,18 @@ h1, h4 {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
+#distance, #time {
+  color: white;
+  display: block;
+  text-align: left;
+  margin-left: 25%;
+}
+#landing-page #distance input, #landing-page #time input{
+  width: 20px;
+  height: 20px;
+}
+
+
 #origin-input,
 #destination-input {
   background-color: #fff;
@@ -69,13 +81,13 @@ h1, h4 {
   text-align: center;
   z-index: 3;
   right: 0;
-  padding-top: 20%;
+  padding-top: 10%;
 }
 
 #form {
   height: 100%;
 }
-#landing-page input, #landing-page button{
+#landing-page input, #landing-page button, #landing-page .halfwayby{
   display: inline-block;
   position: relative;
   width: 50%;
