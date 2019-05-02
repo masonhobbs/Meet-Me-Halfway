@@ -27,13 +27,14 @@ h1, h4 {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-#distance, #time {
-  color: white;
-  display: block;
+.halfwayby {
+  padding-left: 10%;
   text-align: left;
-  margin-left: 25%;
 }
-#landing-page #distance input, #landing-page #time input{
+.halfwayby label{
+  color: white;
+}
+#landing-page .halfwayby input{
   width: 20px;
   height: 20px;
 }

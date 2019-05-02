@@ -30,12 +30,13 @@ function calculate_halfway_point(response) {
   }
 
   // Find total distance and time along path
-  var totalDist = 0;
-  var totalTime = 0;
+  totalDist = 0;
+  totalTime = 0;
   for (i = 0; i < route.legs.length; i++) {
     totalDist += route.legs[i].distance.value;
     totalTime += route.legs[i].duration.value;
   }
+  console.log(totalDist);
 
   // Places the marker's position to the halfway point
   putMarkerOnRoute(50);
@@ -67,7 +68,7 @@ function create_halfway_marker(lat_lng, label, a_distance, b_distance) {
   halfway_marker.myname = label;
 
   all_markers.push(halfway_marker);
-  
+
   // Display halfway point info when marker is clicked
   google.maps.event.addListener(halfway_marker, 'click', function() {
     // Convert GPS coords to address
