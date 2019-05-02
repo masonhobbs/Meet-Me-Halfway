@@ -62,7 +62,7 @@ function create_marker(place) {
         info_window.open(map,gmarker);
       }
       else {
-        alert("Error displaying marker information");
+        alert("Error displaying marker information; please try again in a moment...");
       }
     });
   });
@@ -73,16 +73,30 @@ function add_safe_place(place) {
   safe_places_display = document.getElementById('safe-places');
   geocoder.geocode({'location': place.geometry.location}, function(results, status) {
     if(status == 'OK') {
+      var origin = document.getElementById('origin-input').value;
+      var dest = document.getElementById('destination-input').value;
       var converted_address = results[0].formatted_address;
+
+      // Do some input sanitizing. also: re'place', heh
+      place.name = place.name.replace(/"/g, " ");
+
       safe_places_display.innerHTML += (('<li class="list-group-item d-flex flex-wrap" id="' + converted_address + '">'
-      + '<p class="col-md-8">' + place.name + '</p>')
-      + ('<button type="button" class="btn btn-primary col-md-4 align-self-center"' + 'onclick="view_route(' + "'" + converted_address + "'" + ')">View Route</button>')
-      + ('<p class="col-md-8">' + converted_address + '</p>')
-      + ('<button type="button" class="btn btn-success col-md-4 align-self-center"' + 'onclick="navigate_to(' + "'" + converted_address + "'" + ')">Directions</button></li>'))
+      + '<p class="col-md-6">' + place.name + '</p>')
+      + ('<button type="button" class="btn btn-primary col-md-6 align-self-center"' + 'onclick="view_route(' + "'" + converted_address + "'" + ')">View Route</button>')
+      + ('<p class="col-md-6">' + converted_address + '</p>')
+      + ('<button type="button" class="btn btn-success col-md-6 align-self-center"' + 'onclick="navigate_to(' + "'" + converted_address + "'" + ')">Directions</button>')
+      + '<p class="col-md-6 time-display" id="' + (origin+converted_address+place.name)
+      + '"></p><p class="col-md-6 time-display" id="' + (dest+converted_address+place.name)
+      + '"></p>')
+
+      var dist_from_origin = get_time_to_place(origin, converted_address, place.name);
+      var dist_from_dest = get_time_to_place(dest, converted_address, place.name);
+
+      safe_places_display.innerHTML += "</li>";
     }
     else if(status == 'OVER_QUERY_LIMIT'){
       // Wait some time and try again
-      sleep(500).then(() => {
+      sleep(300).then(() => {
         add_safe_place(place);
       });
     }
@@ -94,4 +108,25 @@ function add_safe_place(place) {
 
 function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+// Returns time from a source address to another address
+function get_time_to_place(start_address, address, name) {
+  route_handler.directionsService.route({
+    origin: start_address,
+    destination: address,
+    travelMode: route_handler.travelMode,
+  }, function(response, status) {
+      if(status === 'OK') {
+        var route = response.routes[0];
+        safe_places_display = document.getElementById(start_address+address+name);
+        safe_places_display.innerHTML += (route.legs[0].duration.text + ' from ' + start_address);
+      }
+      else if(status == 'OVER_QUERY_LIMIT'){
+        // Wait some time and try again
+        sleep(300).then(() => {
+          get_time_to_place(start_address, address, name);
+        });
+      }
+  });
 }

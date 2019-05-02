@@ -32,12 +32,12 @@ function calculate_halfway_point(response) {
   // Find total distance and time along path
   totalDist = 0;
   totalTime = 0;
+  console.log(route.legs);
   for (i = 0; i < route.legs.length; i++) {
     totalDist += route.legs[i].distance.value;
     totalTime += route.legs[i].duration.value;
   }
-  console.log(totalDist);
-
+  console.log("---------");
   // Places the marker's position to the halfway point
   putMarkerOnRoute(50);
 
@@ -45,7 +45,32 @@ function calculate_halfway_point(response) {
     var distance = (percentage/100) * totalDist;
     var display_dist = (0.25 * (totalDist / 1000)).toFixed(2);
     var time = ((percentage/100) * totalTime/60).toFixed(2);
+
+    // by distance
+  //  if($('#distance').is(':checked')) {
     create_halfway_marker(polyline.GetPointAtDistance(distance) ,"Halfway point, distance wise", display_dist + " miles", display_dist + " miles");
+//    }
+
+/* I tried
+    // by time
+    else if($('#time').is(':checked')) {
+      var time_check = 0;
+      var time_dist = 0;
+      for (i = 0; i < route.legs[0].steps.length; i++) {
+        time_dist += route.legs[0].steps[i].distance.value;
+        time_check += route.legs[0].steps[i].duration.value;
+        if(time_check >= (0.5 * totalTime)) {
+          time_check -= (route.legs[0].steps[i].duration.value / 4);
+          time_dist -= (route.legs[0].steps[i].distance.value / 4);
+          console.log((time_check/60).toFixed(2) + " >= " + (0.5 * (totalTime/60)).toFixed(2));
+          break;
+        }
+      }
+
+      create_halfway_marker(polyline.GetPointAtDistance(time_dist) ,"Halfway point, time wise", time + " minutes", display_dist + " miles");
+      console.log(time);
+    }
+*/
   }
 }
 

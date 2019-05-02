@@ -218,3 +218,8 @@ div.sticky {
   cursor: pointer;
   visibility: hidden;
 }
+
+.time-display {
+  font-size: 15px;
+  color: #429b3c;
+}
