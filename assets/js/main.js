@@ -48,6 +48,8 @@ $(document).ready(function(){
   var radius_handler; // Var for controlling radius extender on finding safe meeting places
   var safe_places_display; // HTML div containing where to put the list of safe places
   var all_markers;
+  var totalDist;
+  var totalTime;
 });
 
 function initMap() {
@@ -223,6 +225,20 @@ function view_route(address) {
         // Clear all markers
         for(var i = 0; i < all_markers.length; i++) {
           all_markers[i].setMap(null);
+        }
+
+        var route = response.routes[0];
+        var halfDist = 0;
+        var halfTime = 0;
+        for (i = 0; i < route.legs.length; i++) {
+          halfDist += route.legs[i].distance.value;
+        }
+        console.log(halfDist/totalDist);
+        //console.log(totalDist);
+        if(halfDist >= (totalDist * .65)){//halfway distance 15% or more over other halfway amount
+          var from = document.getElementById('destination-input').value;
+          var viewing = document.getElementById(from);
+          viewing.innerHTML += (('<p style="color:red;">WARNING: This location requires you to drive a significant distance more than the other party.'))
         }
         route_handler.directionsDisplay.setDirections(response);
         //idea: clear out safe places list, replaces with directions

@@ -21,8 +21,12 @@
          <input id="destination-landing" name="destination" type="text"
            placeholder=" Enter a destination location">
            <div class="halfwayby">
-               <span id="distance"><input name="halfwayby" type="radio" value="distance">Halfway Point By Distance</span>
-               <span id="time"><input name="halfwayby" type="radio" value="time">Halfway Point By Time</span>
+             <input type="radio" name="halfway" id="distance" checked="checked">
+             <label for="distance">Halfway Point By Distance</label><br>
+             <input type="radio" name="halfway" id="time">
+             <label for="time">Halfway Point By Time</label>
+               <!--span id="distance"><input name="halfwayby" type="radio" value="distance">Halfway Point By Distance</span-->
+               <!--span id="time"><input name="halfwayby" type="radio" value="time">Halfway Point By Time</span-->
            </div>
          <button id="submit-btn">Submit</button>
      </div>
